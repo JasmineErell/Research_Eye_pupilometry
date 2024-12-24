@@ -4,12 +4,13 @@ import pandas as pd
 class SingleTril:
     def __init__(self, in_path):
         self.in_path = in_path
-
+        self.data = pd.read_csv(self.in_path, low_memory=False, dtype={
+            'RECORDING_SESSION_LABEL': 'int32',
+            'pupil baseline': 'str',
+            'AVERAGE_PUPIL_SIZE_BIN': 'str'
+        })
 
     def load4data(self, RECORDING_SESSION_LABEL):
-        ###takes a random participant and puts his data in 2 lists - X and Y values###
-        # takes only the random participant from participant_chosser func
-        # RECORDING_SESSION_LABEL = self.participant_chosser(self.in_path)
         data = pd.read_csv(self.in_path)
         filtered_data = data[(data['RECORDING_SESSION_LABEL'] == RECORDING_SESSION_LABEL) & (data['critical'] == 'y') & (data['load'] == 4)]
         diff_values = filtered_data['diff from baseline']
@@ -18,7 +19,6 @@ class SingleTril:
         return diff_values_list, diff_values_list120, str(RECORDING_SESSION_LABEL)
 
     def load1data(self, RECORDING_SESSION_LABEL):
-        ###takes a random participant and puts his data in 2 lists - X and Y values###
         data = pd.read_csv(self.in_path)
         filtered_data = data[(data['RECORDING_SESSION_LABEL'] == RECORDING_SESSION_LABEL) & (data['critical'] == 'y') & (data['load'] == 1)]
         diff_values = filtered_data['diff from baseline']
@@ -62,8 +62,8 @@ class SingleTril:
         plt.show()
 
 
-test = SingleTril("C:/Users/jasminee/Research/test.csv")
-test.plot_creator(430)
+# test = SingleTril("C:/Users/jasminee/Research/test.csv")
+# test.plot_creator(430)
 
 
 
