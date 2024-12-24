@@ -11,7 +11,7 @@ class SingleTril:
         })
 
     def load4data(self, RECORDING_SESSION_LABEL):
-        data = pd.read_csv(self.in_path)
+        data = self.data
         filtered_data = data[(data['RECORDING_SESSION_LABEL'] == RECORDING_SESSION_LABEL) & (data['critical'] == 'y') & (data['load'] == 4)]
         diff_values = filtered_data['diff from baseline']
         diff_values_list = diff_values.tolist()
@@ -19,7 +19,7 @@ class SingleTril:
         return diff_values_list, diff_values_list120, str(RECORDING_SESSION_LABEL)
 
     def load1data(self, RECORDING_SESSION_LABEL):
-        data = pd.read_csv(self.in_path)
+        data = self.data
         filtered_data = data[(data['RECORDING_SESSION_LABEL'] == RECORDING_SESSION_LABEL) & (data['critical'] == 'y') & (data['load'] == 1)]
         diff_values = filtered_data['diff from baseline']
         diff_values_list = diff_values.tolist()
