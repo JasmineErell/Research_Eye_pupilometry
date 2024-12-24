@@ -1,65 +1,71 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import random
 
 class SingleTril:
     def __init__(self, in_path):
-        self.in_path = 'C:/firstYear/reaserch/exampleDataBase.csv'
+        self.in_path = in_path
 
-    def participant_chosser(self, file):
-        ### the function chooces a single participant randomly to show is data later on the plot ###
-        data = pd.read_csv(file)  # reading CSV file
-        participants = data['RECORDING_SESSION_LABEL'].tolist() # converting column data to list
-        random_participant = random.choice(participants)
-        return random_participant
 
-    def data_creator(self):
+    def load4data(self, RECORDING_SESSION_LABEL):
         ###takes a random participant and puts his data in 2 lists - X and Y values###
         # takes only the random participant from participant_chosser func
-        RECORDING_SESSION_LABEL = self.participant_chosser(self.in_path)
+        # RECORDING_SESSION_LABEL = self.participant_chosser(self.in_path)
         data = pd.read_csv(self.in_path)
-        filtered_data = data[(data['RECORDING_SESSION_LABEL'] == RECORDING_SESSION_LABEL) & (data['critical'] == 'y')]
+        filtered_data = data[(data['RECORDING_SESSION_LABEL'] == RECORDING_SESSION_LABEL) & (data['critical'] == 'y') & (data['load'] == 4)]
         diff_values = filtered_data['diff from baseline']
         diff_values_list = diff_values.tolist()
         diff_values_list120 = diff_values_list[:120]
         return diff_values_list, diff_values_list120, str(RECORDING_SESSION_LABEL)
 
-    def find_Max_Min(self):
-        diff_value_list, not_relevant1, not_relevant2 = self.data_creator()
+    def load1data(self, RECORDING_SESSION_LABEL):
+        ###takes a random participant and puts his data in 2 lists - X and Y values###
+        data = pd.read_csv(self.in_path)
+        filtered_data = data[(data['RECORDING_SESSION_LABEL'] == RECORDING_SESSION_LABEL) & (data['critical'] == 'y') & (data['load'] == 1)]
+        diff_values = filtered_data['diff from baseline']
+        diff_values_list = diff_values.tolist()
+        diff_values_list120 = diff_values_list[:120]
+        return diff_values_list, diff_values_list120, str(RECORDING_SESSION_LABEL)
+    #
+
+    def find_Max_Min(self, participant):
+        diff_value_list, not_relevant1, not_relevant2 = self.load4data(participant)
         min_val = min(diff_value_list)  # Using built-in min() function
         max_val = max(diff_value_list)  # Using built-in max() function
         return min_val, max_val
 
-    def plot_creator(self):
-        ### After taking the relevan data from a participant, plotting it ###
+    def plot_creator(self, participant):
         X_values = list(range(0, 6000, 50))
-        not_relevant, Y_values, random_participant = self.data_creator()
+        # Get data for both loads
+        not_relevant1, Y_values_load1, _ = self.load1data(participant)
+        not_relevant4, Y_values_load4, _ = self.load4data(participant)
 
-        # Create the plot
-        plt.figure(figsize=(10, 6))
-        plt.ylim(-2000, 2000)
-        plt.title("Random participant number" + " " + random_participant)
-        plt.plot(X_values, Y_values)
+        # Create figure with two subplots side by side
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 6))
 
-        # Get min and max values
-        min_val, max_val = self.find_Max_Min()
+        # Plot Load 1
+        ax1.set_ylim(-2000, 2000)
+        ax1.set_title(f"Participant {participant} - Load 1")
+        ax1.plot(X_values, Y_values_load1)
+        ax1.grid(True)
+        ax1.set_xlabel('Time')
+        ax1.set_ylabel('Difference from baseline')
 
-        # Add min and max values as text on the plot
-        plt.text(0.02, 0.98, f'Max: {max_val:.2f}',
-                 transform=plt.gca().transAxes,
-                 verticalalignment='top',
-                 bbox=dict(facecolor='white', alpha=0.8))
+        # Plot Load 4
+        ax2.set_ylim(-2000, 2000)
+        ax2.set_title(f"Participant {participant} - Load 4")
+        ax2.plot(X_values, Y_values_load4)
+        ax2.grid(True)
+        ax2.set_xlabel('Time')
+        ax2.set_ylabel('Difference from baseline')
 
-        plt.text(0.02, 0.02, f'Min: {min_val:.2f}',
-                 transform=plt.gca().transAxes,
-                 verticalalignment='bottom',
-                 bbox=dict(facecolor='white', alpha=0.8))
-
-        plt.grid(True)  # Added grid for better readability
-        plt.xlabel('Time')  # Added axis labels
-        plt.ylabel('Difference from baseline')
-
+        plt.tight_layout()
         plt.show()
+
+
+test = SingleTril("C:/Users/jasminee/Research/test.csv")
+test.plot_creator(430)
+
+
 
 
 
